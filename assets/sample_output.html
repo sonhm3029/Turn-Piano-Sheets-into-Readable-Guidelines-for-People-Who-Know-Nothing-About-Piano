@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vệt Mưa – Cả Hai Tay</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Playfair+Display:ital@1&display=swap');
+  :root {
+    --bg:#0e0d18; --card:#181726; --border:#252338;
+    --rh:#38bdf8; --lh:#e879f9; --text:#eeeeff; --muted:#6b688f;
+    --BEAT:64px;
+    --do:#f87171; --re:#fb923c; --mi:#facc15;
+    --fa:#4ade80; --sol:#38bdf8; --la:#a78bfa; --si:#f472b6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Be Vietnam Pro',sans-serif;padding:24px 14px 70px;}
+  header{text-align:center;margin-bottom:20px;}
+  header h1{font-family:'Playfair Display',serif;font-style:italic;font-size:2.2rem;
+    background:linear-gradient(120deg,var(--rh),var(--lh));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  header p{color:var(--muted);font-size:.8rem;margin-top:4px;letter-spacing:.8px;}
+  .timesig{display:flex;justify-content:center;margin-bottom:18px;}
+  .tsbox{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);
+    border:1px solid var(--border);border-radius:10px;padding:8px 18px;}
+  .tsnum{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .tsn{font-size:1.5rem;font-weight:900;color:white;line-height:1;}
+  .tsbar{width:26px;height:2px;background:white;}
+  .tsexp{font-size:.74rem;color:var(--muted);line-height:1.65;border-left:1px solid var(--border);padding-left:12px;}
+  .tsexp strong{color:white;}
+  .note-box{max-width:980px;margin:0 auto 18px;background:rgba(251,146,60,.07);
+    border:1px solid rgba(251,146,60,.3);border-radius:12px;padding:11px 16px;
+    font-size:.75rem;color:#fcd34d;line-height:1.75;}
+  .note-box strong{color:white;}
+  .piano-section{max-width:980px;margin:0 auto 20px;background:var(--card);
+    border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+  .ps-title{font-size:.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .keyboard-wrap{overflow-x:auto;padding-bottom:4px;}
+  .keyboard{display:flex;position:relative;height:110px;width:max-content;}
+  .wk{width:30px;height:110px;flex-shrink:0;border:1.5px solid #555;border-top:none;
+    border-radius:0 0 5px 5px;background:#f0eeec;position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+    padding-bottom:4px;margin-right:2px;}
+  .bk{width:19px;height:68px;flex-shrink:0;background:#1a1a1a;
+    border-radius:0 0 4px 4px;position:absolute;top:0;z-index:2;}
+  .kl{font-size:.44rem;font-weight:800;color:rgba(0,0,0,.35);line-height:1;}
+  .wk.rh-key{background:#bfefff;border-color:#38bdf8;}
+  .wk.lh-key{background:#f3c6ff;border-color:#e879f9;}
+  .wk.center{background:#ffe4b5;border:2px solid #f59e0b;}
+  .kdot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:.43rem;font-weight:900;color:rgba(0,0,0,.8);margin-bottom:2px;}
+  .oct-row{display:flex;width:max-content;margin-top:6px;}
+  .oct-item{display:flex;flex-direction:column;align-items:center;}
+  .oct-bar{height:3px;border-radius:2px;margin-bottom:3px;width:100%;}
+  .oct-txt{font-size:.54rem;font-weight:700;}
+  .legend{display:flex;flex-wrap:wrap;gap:7px 16px;justify-content:center;margin-bottom:16px;}
+  .leg{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);}
+  .dot{width:10px;height:10px;border-radius:50%;}
+  .measures{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+  .measure{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .mh{display:flex;align-items:center;gap:8px;padding:8px 14px;
+    border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);}
+  .mn{background:linear-gradient(135deg,var(--rh),var(--lh));color:#0e0d18;
+    width:22px;height:22px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:.64rem;font-weight:900;flex-shrink:0;}
+  .mlabel{font-size:.72rem;color:var(--muted);font-style:italic;flex:1;}
+  .ctag{font-size:.6rem;font-weight:700;background:rgba(232,121,249,.12);
+    color:var(--lh);border-radius:5px;padding:2px 8px;}
+  .timeline{display:flex;flex-direction:column;padding:10px 12px;}
+  .beat-ruler{display:flex;margin-bottom:5px;padding-left:78px;}
+  .bn{width:var(--BEAT);text-align:center;font-size:.5rem;color:var(--muted);font-weight:700;flex-shrink:0;}
+  .bn.s{color:rgba(255,255,255,.6);}
+  .bn.grp{border-left:1px solid rgba(255,255,255,.15);}
+  .trow{display:flex;align-items:stretch;margin-bottom:6px;min-height:70px;}
+  .trow:last-child{margin-bottom:0;}
+  .hlabel{width:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-size:.52rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+    padding:3px;border-radius:7px 0 0 7px;text-align:center;line-height:1.4;}
+  .hlabel.rh{background:rgba(56,189,248,.12);color:var(--rh);}
+  .hlabel.lh{background:rgba(232,121,249,.12);color:var(--lh);}
+  .cells{display:flex;align-items:stretch;flex:1;border-left:2px solid var(--border);position:relative;}
+  .cells::after{content:'';position:absolute;left:calc(var(--BEAT)*3);top:6px;bottom:6px;
+    width:2px;background:rgba(255,255,255,.12);border-radius:2px;pointer-events:none;}
+  .beat-col{width:var(--BEAT);flex-shrink:0;border-right:1px dashed rgba(255,255,255,.05);position:relative;}
+  .beat-col:last-child{border-right:none;}
+  .nb{position:absolute;left:3px;top:4px;bottom:4px;right:3px;border-radius:8px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:2px 4px;overflow:hidden;z-index:1;}
+  .nb.s2{right:auto;width:calc(var(--BEAT)*2 - 6px);}
+  .nb.s3{right:auto;width:calc(var(--BEAT)*3 - 6px);}
+  .nn{font-size:.92rem;font-weight:900;color:rgba(0,0,0,.82);line-height:1;white-space:nowrap;}
+  .ne{font-size:.5rem;font-weight:600;color:rgba(0,0,0,.45);margin-top:1px;}
+  .fb{position:absolute;top:0;right:0;background:#1e1b4b;color:#e0e7ff;
+    border-radius:0 8px 0 8px;min-width:24px;height:24px;
+    font-size:.82rem;font-weight:900;display:flex;align-items:center;justify-content:center;
+    padding:0 3px;line-height:1;
+    border-left:2px solid rgba(255,255,255,.1);border-bottom:2px solid rgba(255,255,255,.1);}
+  .cb{position:absolute;left:3px;top:4px;bottom:4px;border-radius:8px;
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+    padding:4px 8px;overflow:hidden;z-index:1;}
+  .cb.s1{right:3px;} .cb.s3{width:calc(var(--BEAT)*3 - 6px);} .cb.s6{width:calc(var(--BEAT)*6 - 6px);}
+  .cn{font-size:.76rem;font-weight:900;color:rgba(0,0,0,.82);line-height:1;white-space:nowrap;}
+  .ck{font-size:.55rem;font-weight:600;color:rgba(0,0,0,.55);margin-top:2px;white-space:nowrap;}
+  .cf{font-size:.48rem;font-weight:700;color:rgba(0,0,0,.38);margin-top:1px;white-space:nowrap;}
+  .rest{position:absolute;left:3px;top:4px;bottom:4px;right:3px;border-radius:8px;
+    background:rgba(255,255,255,.025);display:flex;align-items:center;
+    justify-content:center;font-size:.75rem;color:var(--muted);opacity:.4;}
+  .do{background:var(--do);} .re{background:var(--re);} .mi{background:var(--mi);}
+  .fa{background:var(--fa);} .sol{background:var(--sol);} .la{background:var(--la);}
+  .si{background:var(--si);} .sib{background:linear-gradient(135deg,#f472b6,#a78bfa);}
+  .ch-C{background:#fca5a5;} .ch-F{background:#6ee7b7;} .ch-G{background:#93c5fd;}
+  .ch-Dm{background:#fdba74;} .ch-Em{background:#fde68a;}
+  .ch-C7{background:#f87171;} .ch-Fmaj7{background:#34d399;}
+  .ch-Em7{background:#fbbf24;} .ch-Dm7{background:#fb923c;}
+  .ch-G7{background:#7dd3fc;} .ch-Cmaj7{background:#d8b4fe;}
+  footer{text-align:center;margin-top:28px;color:var(--muted);font-size:.66rem;opacity:.35;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Vệt Mưa</h1>
+  <p>Vũ Cát Tường &nbsp;·&nbsp; Arr. Người Nghiện Chơi Đàn &nbsp;·&nbsp; Trang 1</p>
+</header>
+
+<div class="timesig">
+  <div class="tsbox">
+    <div class="tsnum"><div class="tsn">6</div><div class="tsbar"></div><div class="tsn">8</div></div>
+    <div class="tsexp">
+      <strong>Nhịp 6/8 — 6 phách mỗi nhịp</strong><br>
+      Nhóm 2 cụm 3: <strong>●●● | ●●●</strong> &nbsp;·&nbsp; Nhấn phách 1 và 4
+    </div>
+  </div>
+</div>
+
+<div class="note-box">
+  📝 <strong>Cấu trúc bản này:</strong> Tay phải viết 2 giọng xen kẽ nhau (không phải 2 nốt cùng lúc).
+  Guide này hiển thị <strong>1 nốt mỗi phách</strong> — giai điệu chính — để học từng bước.
+</div>
+
+<div class="piano-section">
+  <div class="ps-title">🎹 Vị trí trên bàn phím</div>
+  <div class="keyboard-wrap"><div class="keyboard" id="kb"></div></div>
+  <div id="oct-row" class="oct-row"></div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;">
+    <div style="display:flex;align-items:center;gap:7px;font-size:.72rem;">
+      <div style="width:20px;height:10px;background:#f3c6ff;border:1.5px solid #e879f9;border-radius:2px;"></div>
+      <span style="color:var(--lh)">Tay trái C3</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;font-size:.72rem;">
+      <div style="width:20px;height:10px;background:#bfefff;border:1.5px solid #38bdf8;border-radius:2px;"></div>
+      <span style="color:var(--rh)">Tay phải C4–C5</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;font-size:.72rem;">
+      <div style="width:20px;height:10px;background:#ffe4b5;border:2px solid #f59e0b;border-radius:2px;"></div>
+      <span style="color:#f59e0b">C4 = Đô giữa</span>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const kb=document.getElementById('kb'),octRow=document.getElementById('oct-row');
+  const W=['C','D','E','F','G','A','B'];
+  const NC={C:'#f87171',D:'#fb923c',E:'#facc15',F:'#4ade80',G:'#38bdf8',A:'#a78bfa',B:'#f472b6'};
+  const NV={C:'Đô',D:'Rê',E:'Mi',F:'Fa',G:'Sol',A:'La',B:'Si'};
+  const octs=[1,2,3,4,5];const KW=30,GAP=2,OW=(KW+GAP)*7;
+  octs.forEach(oct=>{W.forEach(n=>{
+    const isRH=oct===4||(oct===5&&n==='C'),isLH=oct===3,isC=oct===4&&n==='C';
+    const wk=document.createElement('div');
+    wk.className='wk'+(isC?' center':isRH?' rh-key':isLH?' lh-key':'');
+    if(isRH||isLH){const d=document.createElement('div');d.className='kdot';d.style.background=NC[n];d.textContent=NV[n];wk.appendChild(d);}
+    const l=document.createElement('div');l.className='kl';l.textContent=n+oct;wk.appendChild(l);kb.appendChild(wk);
+  });});
+  const c6=document.createElement('div');c6.className='wk';const l6=document.createElement('div');l6.className='kl';l6.textContent='C6';c6.appendChild(l6);kb.appendChild(c6);
+  [22,54,118,150,182].forEach(b=>octs.forEach(oct=>{const bk=document.createElement('div');bk.className='bk';bk.style.left=((oct-1)*OW+b)+'px';kb.appendChild(bk);}));
+  ['#444','#444','#e879f9','#38bdf8','#444'].forEach((c,i)=>{
+    const div=document.createElement('div');div.className='oct-item';div.style.width=OW+'px';
+    const bar=document.createElement('div');bar.className='oct-bar';bar.style.background=c;
+    const txt=document.createElement('div');txt.className='oct-txt';txt.style.color=c;
+    txt.textContent=['Q8-1','Q8-2','🤚 Tay trái (C3)','🖐 Tay phải (C4)','Q8-5'][i];
+    div.appendChild(bar);div.appendChild(txt);octRow.appendChild(div);
+  });
+})();
+</script>
+
+<div class="legend">
+  <div class="leg"><div class="dot" style="background:var(--do)"></div>Đô</div>
+  <div class="leg"><div class="dot" style="background:var(--re)"></div>Rê</div>
+  <div class="leg"><div class="dot" style="background:var(--mi)"></div>Mi</div>
+  <div class="leg"><div class="dot" style="background:var(--fa)"></div>Fa</div>
+  <div class="leg"><div class="dot" style="background:var(--sol)"></div>Sol</div>
+  <div class="leg"><div class="dot" style="background:var(--la)"></div>La</div>
+  <div class="leg"><div class="dot" style="background:var(--si)"></div>Si / Siᵇ</div>
+</div>
+
+<div class="measures">
+
+<!-- NHỊP 1 -->
+<div class="measure">
+  <div class="mh"><div class="mn">1</div><div class="mlabel">Pickup — 3 nốt chạy vào</div><div class="ctag">—</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="rest">—</div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">③</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">④</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+        <div class="beat-col"><div class="nb do"><div class="fb">①</div><div class="nn">Đô</div><div class="ne">C5</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="rest">—</div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+        <div class="beat-col"><div class="rest">—</div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 2: Fmaj7 — đi xuống C5→E4 -->
+<div class="measure">
+  <div class="mh"><div class="mn">2</div><div class="mlabel">Chạy xuống C5 → E4</div><div class="ctag">Fmaj7</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb do"><div class="fb">①</div><div class="nn">Đô</div><div class="ne">C5</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">④</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb fa"><div class="fb">②</div><div class="nn">Fa</div><div class="ne">F4</div></div></div>
+        <div class="beat-col"><div class="nb mi"><div class="fb">①</div><div class="nn">Mi</div><div class="ne">E4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-Fmaj7 s6"><div class="cn">Fmaj7 — giữ cả nhịp</div><div class="ck">Fa · La · Đô · Mi</div><div class="cf">⑤ · ③ · ② · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 3: Em7 — đi lên G4→B4, lặp 2 lần -->
+<div class="measure">
+  <div class="mh"><div class="mn">3</div><div class="mlabel">Chạy lên G4 → B4 (lặp 2 lần)</div><div class="ctag">Em7</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">④</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">④</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-Em7 s6"><div class="cn">Em7 — giữ cả nhịp</div><div class="ck">Mi · Sol · Si · Rê</div><div class="cf">⑤ · ③ · ② · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 4: Dm7 xuống → G7 lên -->
+<div class="measure">
+  <div class="mh"><div class="mn">4</div><div class="mlabel">Dm7 xuống · G7 lên</div><div class="ctag">Dm7 → G7</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb la"><div class="fb">⑤</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">④</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb fa"><div class="fb">③</div><div class="nn">Fa</div><div class="ne">F4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">④</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-Dm7 s3"><div class="cn">Dm7</div><div class="ck">Rê·Fa·La·Đô</div><div class="cf">⑤·③·②·①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+        <div class="beat-col"><div class="cb ch-G7 s3"><div class="cn">G7</div><div class="ck">Sol·Si·Rê·Fa</div><div class="cf">⑤·③·②·①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 5: Cmaj7 xuống → C7 có Siᵇ -->
+<div class="measure">
+  <div class="mh"><div class="mn">5</div><div class="mlabel">Xuống dần — Siᵇ ở C7</div><div class="ctag">Cmaj7 → C7</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb fa"><div class="fb">②</div><div class="nn">Fa</div><div class="ne">F4</div></div></div>
+        <div class="beat-col"><div class="nb mi"><div class="fb">①</div><div class="nn">Mi</div><div class="ne">E4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb sib"><div class="fb">④</div><div class="nn">Siᵇ</div><div class="ne">Bb4 ⚠️</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">③</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-Cmaj7 s3"><div class="cn">Cmaj7</div><div class="ck">Đô·Mi·Sol·Si</div><div class="cf">⑤·③·②·①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+        <div class="beat-col"><div class="cb ch-C7 s3"><div class="cn">C7</div><div class="ck">Đô·Mi·Sol·Siᵇ</div><div class="cf">⑤·③·②·①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 6: F — đi lên F4→C5, lặp 2 lần -->
+<div class="measure">
+  <div class="mh"><div class="mn">6</div><div class="mlabel">Lên F4 → C5 (lặp 2 lần)</div><div class="ctag">F</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb fa"><div class="fb">①</div><div class="nn">Fa</div><div class="ne">F4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">③</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb do"><div class="fb">①</div><div class="nn">Đô</div><div class="ne">C5</div></div></div>
+        <div class="beat-col"><div class="nb fa"><div class="fb">①</div><div class="nn">Fa</div><div class="ne">F4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">③</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb do"><div class="fb">①</div><div class="nn">Đô</div><div class="ne">C5</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-F s6"><div class="cn">F — giữ cả nhịp</div><div class="ck">Fa · La · Đô</div><div class="cf">⑤ · ③ · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 7: Em — đi lên E4→B4, lặp 2 lần -->
+<div class="measure">
+  <div class="mh"><div class="mn">7</div><div class="mlabel">Lên E4 → B4 (lặp 2 lần)</div><div class="ctag">Em</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb mi"><div class="fb">①</div><div class="nn">Mi</div><div class="ne">E4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+        <div class="beat-col"><div class="nb mi"><div class="fb">①</div><div class="nn">Mi</div><div class="ne">E4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-Em s6"><div class="cn">Em — giữ cả nhịp</div><div class="ck">Mi · Sol · Si</div><div class="cf">⑤ · ③ · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 8: Dm xuống → G lên -->
+<div class="measure">
+  <div class="mh"><div class="mn">8</div><div class="mlabel">Dm xuống · G lên — chuẩn bị điệp khúc</div><div class="ctag">Dm → G</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb la"><div class="fb">⑤</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">④</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb fa"><div class="fb">③</div><div class="nn">Fa</div><div class="ne">F4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">④</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+        <div class="beat-col"><div class="nb si"><div class="fb">⑤</div><div class="nn">Si</div><div class="ne">B4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-Dm s3"><div class="cn">Dm</div><div class="ck">Rê · Fa · La</div><div class="cf">⑤ · ③ · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+        <div class="beat-col"><div class="cb ch-G s3"><div class="cn">G</div><div class="ck">Sol · Si · Rê</div><div class="cf">⑤ · ③ · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NHỊP 9: C → C7 → Fmaj7 — vào điệp khúc -->
+<div class="measure">
+  <div class="mh"><div class="mn">9</div><div class="mlabel">🎵 "Cơn mưa đã xóa hết..." — vào điệp khúc</div><div class="ctag">C → C7 → Fmaj7</div></div>
+  <div class="timeline">
+    <div class="beat-ruler">
+      <div class="bn s">1</div><div class="bn">2</div><div class="bn">3</div>
+      <div class="bn s grp">4</div><div class="bn">5</div><div class="bn">6</div>
+    </div>
+    <div class="trow">
+      <div class="hlabel rh">TAY<br>PHẢI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="nb mi"><div class="fb">①</div><div class="nn">Mi</div><div class="ne">E4</div></div></div>
+        <div class="beat-col"><div class="nb sol"><div class="fb">③</div><div class="nn">Sol</div><div class="ne">G4</div></div></div>
+        <div class="beat-col">
+          <div class="nb do s2"><div class="fb">①</div><div class="nn">Đô ——</div><div class="ne">C5 · giữ 2 phách</div></div>
+        </div>
+        <div class="beat-col"></div>
+        <div class="beat-col"><div class="nb sib"><div class="fb">④</div><div class="nn">Siᵇ</div><div class="ne">Bb4</div></div></div>
+        <div class="beat-col"><div class="nb la"><div class="fb">③</div><div class="nn">La</div><div class="ne">A4</div></div></div>
+      </div>
+    </div>
+    <div class="trow">
+      <div class="hlabel lh">TAY<br>TRÁI</div>
+      <div class="cells">
+        <div class="beat-col"><div class="cb ch-C s3"><div class="cn">C</div><div class="ck">Đô · Mi · Sol</div><div class="cf">⑤ · ③ · ①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+        <div class="beat-col"><div class="cb ch-Fmaj7 s3"><div class="cn">C7 → Fmaj7</div><div class="ck">Fa·La·Đô·Mi</div><div class="cf">⑤·③·②·①</div></div></div>
+        <div class="beat-col"></div><div class="beat-col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div style="max-width:980px;margin:16px auto 0;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px;padding:11px 15px;
+  font-size:.74rem;color:var(--muted);line-height:1.85;text-align:center;">
+  ⚠️ <strong style="color:#fcd34d">Siᵇ (Bb4)</strong> = phím đen giữa La và Si — chú ý nhịp 5 và 9.<br>
+  ⭐ <strong style="color:white;">Lộ trình:</strong> Tay phải chậm → Tay trái hợp âm → Ghép 2 tay từng nhịp → Tăng tốc lên ♩=72
+</div>
+
+<footer><p>Vệt Mưa · Vũ Cát Tường · Arr. Người Nghiện Chơi Đàn · Trang 1</p></footer>
+</body>
+</html>
