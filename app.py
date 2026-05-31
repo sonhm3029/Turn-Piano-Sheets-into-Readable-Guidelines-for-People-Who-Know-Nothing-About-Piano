@@ -1,3 +1,4 @@
+import base64
 import time
 from pathlib import Path
 
@@ -28,6 +29,8 @@ I18N = {
         s3         = "Tạo hướng dẫn...",
         done       = "Hoàn tất!",
         dl         = "Tải về HTML",
+        fullscreen = "Mở toàn màn hình",
+        preview    = "Xem trước hướng dẫn",
     ),
     "en": dict(
         page_title = "Sheet Music → Piano Guide",
@@ -41,6 +44,8 @@ I18N = {
         s3         = "Building guide...",
         done       = "Done!",
         dl         = "Download HTML",
+        fullscreen = "Open fullscreen",
+        preview    = "Guide preview",
     ),
 }
 
@@ -425,9 +430,14 @@ if uploaded:
 if "result_html" in st.session_state:
     html = st.session_state["result_html"]
     stem = Path(st.session_state["source_name"]).stem
+    html_b64 = base64.b64encode(html.encode("utf-8")).decode("ascii")
 
     st.divider()
-    dl_col, _ = st.columns([2, 5])
+    st.markdown(
+        f"<p class='file-meta'><strong>{t['preview']}</strong></p>",
+        unsafe_allow_html=True,
+    )
+    dl_col, full_col, _ = st.columns([2, 2, 3])
     with dl_col:
         st.download_button(
             t["dl"],
@@ -435,6 +445,59 @@ if "result_html" in st.session_state:
             file_name=f"{stem}_guide.html",
             mime="text/html",
             use_container_width=True,
+        )
+    with full_col:
+        components.html(
+            f"""
+            <!doctype html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                html, body {{
+                  margin: 0;
+                  padding: 0;
+                  background: transparent;
+                  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }}
+                button {{
+                  width: 100%;
+                  min-height: 40px;
+                  border: 1.5px solid #d8e0e3;
+                  border-radius: 10px;
+                  background: #fff;
+                  color: #111827;
+                  cursor: pointer;
+                  font-size: 14px;
+                  font-weight: 800;
+                  box-shadow: 0 10px 28px rgba(31,41,55,.07);
+                  transition: border-color .15s, color .15s, transform .15s;
+                }}
+                button:hover {{
+                  border-color: #14b8a6;
+                  color: #0f766e;
+                  transform: translateY(-1px);
+                }}
+              </style>
+            </head>
+            <body>
+              <button type="button" id="open-guide">{t["fullscreen"]}</button>
+              <script>
+                const encoded = "{html_b64}";
+                document.getElementById("open-guide").addEventListener("click", () => {{
+                  const bytes = Uint8Array.from(atob(encoded), char => char.charCodeAt(0));
+                  const guideHtml = new TextDecoder("utf-8").decode(bytes);
+                  const blob = new Blob([guideHtml], {{ type: "text/html;charset=utf-8" }});
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, "_blank", "noopener,noreferrer");
+                  setTimeout(() => URL.revokeObjectURL(url), 60000);
+                }});
+              </script>
+            </body>
+            </html>
+            """,
+            height=44,
+            scrolling=False,
         )
     st.markdown("<div style='height:.5rem'></div>", unsafe_allow_html=True)
     components.html(html, height=920, scrolling=True)

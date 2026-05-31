@@ -15,6 +15,15 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'Be Vietnam Pro',sans-serif;padding:24px 14px 70px;}
+  .guide-toolbar{position:sticky;top:0;z-index:50;max-width:980px;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:rgba(14,13,24,.86);backdrop-filter:blur(14px);
+    border:1px solid var(--border);border-radius:14px;padding:10px 12px;}
+  .gt-title{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .gt-title strong{font-size:.78rem;color:white;letter-spacing:.2px;}
+  .gt-title span{font-size:.66rem;color:var(--muted);line-height:1.45;}
+  .gt-link{flex-shrink:0;text-decoration:none;color:#0e0d18;background:linear-gradient(135deg,var(--rh),var(--lh));
+    border-radius:999px;padding:8px 12px;font-size:.68rem;font-weight:900;}
   header{text-align:center;margin-bottom:20px;}
   header h1{font-family:'Playfair Display',serif;font-style:italic;font-size:2.2rem;
     background:linear-gradient(120deg,var(--rh),var(--lh));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -31,6 +40,14 @@
     border:1px solid rgba(251,146,60,.3);border-radius:12px;padding:11px 16px;
     font-size:.75rem;color:#fcd34d;line-height:1.75;}
   .note-box strong{color:white;}
+  .guide-help{max-width:980px;margin:0 auto 18px;background:rgba(255,255,255,.035);
+    border:1px solid var(--border);border-radius:14px;padding:13px 14px;}
+  .guide-help-title{font-size:.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .guide-help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+  .help-step{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);
+    border-radius:10px;padding:10px 11px;line-height:1.65;}
+  .help-step strong{display:block;color:white;font-size:.74rem;margin-bottom:2px;}
+  .help-step span{color:var(--muted);font-size:.68rem;}
   .piano-section{max-width:980px;margin:0 auto 20px;background:var(--card);
     border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
   .ps-title{font-size:.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
@@ -113,9 +130,24 @@
   .ch-Em7{background:#fbbf24;} .ch-Dm7{background:#fb923c;}
   .ch-G7{background:#7dd3fc;} .ch-Cmaj7{background:#d8b4fe;}
   footer{text-align:center;margin-top:28px;color:var(--muted);font-size:.66rem;opacity:.35;}
+  @media(max-width:720px){
+    body{padding:14px 10px 56px;}
+    .guide-toolbar{position:static;align-items:flex-start;border-radius:12px;}
+    .guide-help-grid{grid-template-columns:1fr;}
+    header h1{font-size:1.9rem;}
+    .tsbox{align-items:flex-start;}
+  }
 </style>
 </head>
 <body>
+<div class="guide-toolbar">
+  <div class="gt-title">
+    <strong>Piano Guide</strong>
+    <span>Không cần đọc nhạc: đi từ vị trí phím → từng nhịp → ghép hai tay.</span>
+  </div>
+  <a class="gt-link" href="#measures">Bắt đầu chơi</a>
+</div>
+
 <header>
   <h1>Vệt Mưa</h1>
   <p>Vũ Cát Tường &nbsp;·&nbsp; Arr. Người Nghiện Chơi Đàn &nbsp;·&nbsp; Trang 1</p>
@@ -134,6 +166,15 @@
 <div class="note-box">
   📝 <strong>Cấu trúc bản này:</strong> Tay phải viết 2 giọng xen kẽ nhau (không phải 2 nốt cùng lúc).
   Guide này hiển thị <strong>1 nốt mỗi phách</strong> — giai điệu chính — để học từng bước.
+</div>
+
+<div class="guide-help">
+  <div class="guide-help-title">Cách đọc guide này</div>
+  <div class="guide-help-grid">
+    <div class="help-step"><strong>1. Nhìn vị trí phím</strong><span>Màu xanh là tay phải, màu hồng là tay trái, C4 là Đô giữa.</span></div>
+    <div class="help-step"><strong>2. Chơi từng ô nhịp</strong><span>Đi từ trái sang phải. Mỗi ô là một phách cần bấm hoặc giữ.</span></div>
+    <div class="help-step"><strong>3. Theo số ngón tay</strong><span>Số ở góc nốt cho biết dùng ngón nào để bấm phím đó.</span></div>
+  </div>
 </div>
 
 <div class="piano-section">
@@ -191,7 +232,7 @@
   <div class="leg"><div class="dot" style="background:var(--si)"></div>Si / Siᵇ</div>
 </div>
 
-<div class="measures">
+<div class="measures" id="measures">
 
 <!-- NHỊP 1 -->
 <div class="measure">

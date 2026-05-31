@@ -8,6 +8,7 @@ The app accepts PDF/image uploads, runs them through the processing pipeline, an
 
 - Upload PDF, PNG, JPG, or JPEG sheet music.
 - Preview the generated zero-knowledge-friendly guide directly in the app.
+- Open the generated guide in a fullscreen browser tab for easier practice.
 - Download the generated guide as an HTML file.
 - Switch UI language between Vietnamese and English.
 - Current processor is a placeholder that returns `assets/sample_output.html`.
