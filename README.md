@@ -1,13 +1,13 @@
 # Piano Guide
 
-Turn piano sheet music files into beginner-friendly piano instructions.
+Play the piano songs you love from sheet music, without needing piano skills or music theory.
 
-The app accepts PDF/image uploads, runs them through the processing pipeline, and displays an HTML guide that explains the music in plain language for people who cannot read notation yet.
+The app accepts PDF/image uploads, runs them through the processing pipeline, and displays an HTML guide that tells you exactly what to press, step by step, so you can play a song even if you do not know piano or music notation.
 
 ## Features
 
 - Upload PDF, PNG, JPG, or JPEG sheet music.
-- Preview the generated beginner guide directly in the app.
+- Preview the generated zero-knowledge-friendly guide directly in the app.
 - Download the generated guide as an HTML file.
 - Switch UI language between Vietnamese and English.
 - Current processor is a placeholder that returns `assets/sample_output.html`.

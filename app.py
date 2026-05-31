@@ -18,7 +18,7 @@ st.set_page_config(
 I18N = {
     "vi": dict(
         page_title = "Sheet Nhạc → Hướng Dẫn Piano",
-        subtitle   = "Tải lên bản nhạc · nhận hướng dẫn từng nốt trực quan cho người mới bắt đầu",
+        subtitle   = "Chơi bài piano bạn thích từ sheet nhạc · không cần biết piano hay nhạc lý",
         lang_label = "Ngôn ngữ",
         upload_hint= "PDF, PNG, JPG hoặc JPEG",
         file_ready = "File đã sẵn sàng",
@@ -31,7 +31,7 @@ I18N = {
     ),
     "en": dict(
         page_title = "Sheet Music → Piano Guide",
-        subtitle   = "Upload sheet music · get a visual note-by-note guide for absolute beginners",
+        subtitle   = "Play the piano songs you love from sheet music · no piano skills or music theory needed",
         lang_label = "Language",
         upload_hint= "PDF, PNG, JPG, or JPEG",
         file_ready = "File ready",
@@ -353,7 +353,7 @@ with brand_col:
           <div class="brand-mark">🎹</div>
           <div class="brand-copy">
             <div class="brand-name">Piano Guide</div>
-            <div class="brand-sub">Sheet music to beginner notes</div>
+            <div class="brand-sub">Play songs without theory</div>
           </div>
         </div>
         """,
