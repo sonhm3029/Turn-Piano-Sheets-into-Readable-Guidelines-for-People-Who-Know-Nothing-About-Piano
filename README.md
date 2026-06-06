@@ -50,10 +50,20 @@ requirements.txt       Python dependencies
 .python-version        Python runtime version
 ```
 
+## Pipeline
+
+```text
+PDF → pdf2image → homr (OMR) → MusicXML → parse notes → LLM → HTML guide
+```
+
+- **OMR**: [homr](https://github.com/liebharc/homr) — open-source, Python-native, optimized for piano grand staff.
+- **Output**: MusicXML per page, then parsed into structured note/fingering data for the guide.
+
 ## Current Status
 
 `src/processor.py` currently simulates processing and returns the sample HTML. The real pipeline still needs to be implemented:
 
-1. Convert uploaded PDF/images into page images.
-2. Extract musical structure with a vision model.
-3. Render structured notes/chords/fingering into the HTML guide format.
+1. Convert uploaded PDF/images into page images (`pdf2image`).
+2. Run `homr` on each page to produce MusicXML.
+3. Parse MusicXML to extract notes, chords, and timing.
+4. Feed structured data into LLM to render the HTML guide.

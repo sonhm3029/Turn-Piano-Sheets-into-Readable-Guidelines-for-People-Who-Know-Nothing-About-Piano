@@ -19,6 +19,33 @@ assets/sample_output.html
 README.md              Human-facing project docs
 ```
 
+## OMR Pipeline
+
+Chosen OMR tool: **[homr](https://github.com/liebharc/homr)** — actively maintained, Python-native, optimized for piano grand staff, outputs MusicXML.
+
+Full pipeline:
+
+```text
+PDF → pdf2image (dpi=200) → homr → MusicXML → parse notes → LLM → HTML guide
+```
+
+Install:
+
+```bash
+pip install uv pdf2image
+brew install poppler
+git clone https://github.com/liebharc/homr.git && cd homr && pip install -e .
+```
+
+Run homr on a single page image:
+
+```bash
+homr assets/vetmua_page_1.png
+# outputs vetmua_page_1.musicxml in the same directory
+```
+
+Expected accuracy on complex piano sheets (dense 16th-note runs, 2-voice treble): ~70–85%. Post-processing or LLM cleanup needed.
+
 ## Important Implementation Notes
 
 - Keep user-facing project documentation in `README.md`, not here.
