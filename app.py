@@ -6,6 +6,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from src.processor import analyze
+from src.sheet_viewer import build_viewer_html
 
 st.set_page_config(
     page_title="Piano Guide",
@@ -21,7 +22,7 @@ I18N = {
         page_title = "Sheet Nhạc → Hướng Dẫn Piano",
         subtitle   = "Chơi bài piano bạn thích từ sheet nhạc · không cần biết piano hay nhạc lý",
         lang_label = "Ngôn ngữ",
-        upload_hint= "PDF, PNG, JPG hoặc JPEG",
+        upload_hint= "PDF, PNG, JPG, JPEG hoặc MusicXML (.xml, .musicxml)",
         file_ready = "File đã sẵn sàng",
         btn        = "Phân tích",
         s1         = "Đọc và chuyển đổi file...",
@@ -36,7 +37,7 @@ I18N = {
         page_title = "Sheet Music → Piano Guide",
         subtitle   = "Play the piano songs you love from sheet music · no piano skills or music theory needed",
         lang_label = "Language",
-        upload_hint= "PDF, PNG, JPG, or JPEG",
+        upload_hint= "PDF, PNG, JPG, JPEG or MusicXML (.xml, .musicxml)",
         file_ready = "File ready",
         btn        = "Analyze",
         s1         = "Reading and converting file...",
@@ -395,12 +396,14 @@ st.markdown(f"""
 
 uploaded = st.file_uploader(
     "upload",
-    type=["pdf", "png", "jpg", "jpeg"],
+    type=["pdf", "png", "jpg", "jpeg", "xml", "musicxml"],
     label_visibility="collapsed",
     help=t["upload_hint"],
 )
 
 if uploaded:
+    is_musicxml = uploaded.name.lower().endswith((".xml", ".musicxml"))
+
     st.markdown("<div style='height:.4rem'></div>", unsafe_allow_html=True)
     name_col, btn_col = st.columns([4, 1])
     with name_col:
@@ -411,9 +414,22 @@ if uploaded:
             unsafe_allow_html=True,
         )
     with btn_col:
-        do_analyze = st.button(t["btn"], type="primary", use_container_width=True)
+        if is_musicxml:
+            do_view = st.button("🎼 View", type="primary", use_container_width=True)
+            do_analyze = False
+        else:
+            do_analyze = st.button(t["btn"], type="primary", use_container_width=True)
+            do_view = False
 
-    if do_analyze:
+    # ── MusicXML path: render sheet viewer ────────────────────────────────────
+    if is_musicxml and do_view:
+        xml_str = uploaded.read().decode("utf-8", errors="replace")
+        st.session_state["viewer_html"] = build_viewer_html(xml_str)
+        st.session_state["viewer_name"] = uploaded.name
+        st.session_state.pop("result_html", None)
+
+    # ── PDF / image path: run analysis pipeline ───────────────────────────────
+    elif not is_musicxml and do_analyze:
         with st.status(t["s1"], expanded=True) as status:
             st.write(t["s1"])
             result_html = analyze(uploaded.read(), uploaded.name)
@@ -424,6 +440,18 @@ if uploaded:
         status.update(label=t["done"], state="complete", expanded=False)
         st.session_state["result_html"] = result_html
         st.session_state["source_name"] = uploaded.name
+        st.session_state.pop("viewer_html", None)
+
+# ─── MusicXML Sheet Viewer ─────────────────────────────────────────────────
+
+if "viewer_html" in st.session_state:
+    st.divider()
+    st.markdown(
+        f"<p class='file-meta'><strong>🎼 {st.session_state['viewer_name']}</strong></p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("<div style='height:.3rem'></div>", unsafe_allow_html=True)
+    components.html(st.session_state["viewer_html"], height=750, scrolling=True)
 
 # ─── Result ────────────────────────────────────────────────────────────────
 
